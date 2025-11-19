@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Day Predictor 3000</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #0f172a;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 20px;
+            background: #1f2937;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #8b5cf6;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .day-selector {
+            padding: 10px;
+            border-radius: 20px;
+            border: 2px solid #8b5cf6;
+            outline: none;
+            font-size: 14px;
+            cursor: pointer;
+            background: #374151;
+            color: #ffffff;
+            margin-bottom: 20px;
+            width: 200px;
+            appearance: none;
+            padding-right: 30px;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 12px auto;
+        }
+
+        .predict-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #8b5cf6, #6366f1);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            transition: all 0.3s ease;
+            width: 200px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .predict-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .predict-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1f2937;
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 10000;
+            width: 80%;
+            max-width: 500px;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            text-align: center;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+        }
+
+        .close-btn {
+            padding: 10px 20px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        select option {
+            background: #374151;
+            color: white;
+            padding: 10px;
+        }
+
+        .loading {
+            color: #ffffff;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .result {
+            color: #6366f1;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 Next Day Predictor 3000</h1>
+        <select class="day-selector" id="daySelector">
+            <option value="">Select Today</option>
+            <option value="Sunday">Sunday</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+        </select>
+        <button class="predict-btn" id="predictBtn">🔮 Predict Tomorrow</button>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="modal"></div>
+
+    <script>
+        const daySelector = document.getElementById('daySelector');
+        const predictBtn = document.getElementById('predictBtn');
+        const modal = document.getElementById('modal');
+        const overlay = document.getElementById('overlay');
+
+        const loadingMessages = [
+            "📅 Checking your calendar",
+            "🚀 Hacking NASA satellites",
+            "🔍 Analyzing your Chrome history",
+            "🏏 Confirming Dhoni's next IPL season",
+            "🤖 Consulting with AI overlords",
+            "🎯 Predicting tomorrow"
+        ];
+
+        function showLoadingMessage(message) {
+            return new Promise(resolve => {
+                modal.innerHTML = `
+                    <div class="loading">
+                        ${message}<span class="dots">...</span>
+                    </div>
+                `;
+                setTimeout(resolve, 1000);
+            });
+        }
+
+        function getTomorrow(today) {
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const currentIndex = days.indexOf(today);
+            const tomorrowIndex = (currentIndex + 1) % 7;
+            return days[tomorrowIndex];
+        }
+
+        daySelector.addEventListener('change', () => {
+            if (daySelector.value) {
+                predictBtn.classList.add('active');
+            } else {
+                predictBtn.classList.remove('active');
+            }
+        });
+
+        async function predict() {
+            if (!daySelector.value) return;
+
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+
+            for (let message of loadingMessages) {
+                await showLoadingMessage(message);
+            }
+
+            const tomorrow = getTomorrow(daySelector.value);
+
+            modal.innerHTML = `
+                <h2 style="color: #8b5cf6;">🎉 Prediction Complete! 🎉</h2>
+                <p>If today is ${daySelector.value}...</p>
+                <div class="result">Tomorrow will be ${tomorrow}!</div>
+                <p style="color: #9ca3af;">* This prediction was made using highly advanced AI technology</p>
+                <button class="close-btn" onclick="closeModal()">Close</button>
+            `;
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+        }
+
+        predictBtn.addEventListener('click', predict);
+        overlay.addEventListener('click', closeModal);
+    </script>
+</body>
+</html>

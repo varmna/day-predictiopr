@@ -63,13 +63,7 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
             transition: all 0.3s ease;
             width: 200px;
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .predict-btn.active {
             opacity: 1;
-            pointer-events: auto;
         }
 
         .predict-btn:hover {
@@ -150,7 +144,6 @@
     <div class="container">
         <h1>🔮 Next Day Predictor 3000</h1>
         <select class="day-selector" id="daySelector">
-            <option value="">Select Today</option>
             <option value="Sunday">Sunday</option>
             <option value="Monday">Monday</option>
             <option value="Tuesday">Tuesday</option>
@@ -175,11 +168,10 @@
             "📅 Checking your calendar",
             "🚀 Hacking NASA satellites",
             "🔍 Analyzing your Chrome history",
-            "🏏 Confirming Dhoni's next IPL season",
+            "🏏 Checking availability... Dhoni said thoda ruk",
+            "🏆 Dhoni hasn't said no so that's basically a yes",
             "🤖 Consulting with AI overlords",
             "🎯 Predicting tomorrow"
-            "checking availbility... Dhoni said thoda ruk",
-            Dhoni hasn't said no so that's bascially a yes",
         ];
 
         function showLoadingMessage(message) {
@@ -189,8 +181,7 @@
                         ${message}<span class="dots"></span>
                     </div>
                 `;
-                setTimeout(resolve, 3
-                           000); // Increased to 4 seconds
+                setTimeout(resolve, 2000); // 2 seconds per message
             });
         }
 
@@ -201,17 +192,7 @@
             return days[tomorrowIndex];
         }
 
-        daySelector.addEventListener('change', () => {
-            if (daySelector.value) {
-                predictBtn.classList.add('active');
-            } else {
-                predictBtn.classList.remove('active');
-            }
-        });
-
         async function predict() {
-            if (!daySelector.value) return;
-
             modal.style.display = 'block';
             overlay.style.display = 'block';
 
@@ -240,3 +221,4 @@
     </script>
 </body>
 </html>
+

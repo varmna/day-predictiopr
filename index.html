@@ -131,6 +131,19 @@
             font-weight: bold;
             margin: 20px 0;
         }
+
+        @keyframes loadingDots {
+            0% { content: ""; }
+            25% { content: "."; }
+            50% { content: ".."; }
+            75% { content: "..."; }
+            100% { content: ""; }
+        }
+
+        .dots::after {
+            content: "";
+            animation: loadingDots 2s infinite;
+        }
     </style>
 </head>
 <body>
@@ -165,16 +178,19 @@
             "🏏 Confirming Dhoni's next IPL season",
             "🤖 Consulting with AI overlords",
             "🎯 Predicting tomorrow"
+            "checking availbility... Dhoni said thoda ruk",
+            Dhoni hasn't said no so that's bascially a yes",
         ];
 
         function showLoadingMessage(message) {
             return new Promise(resolve => {
                 modal.innerHTML = `
                     <div class="loading">
-                        ${message}<span class="dots">...</span>
+                        ${message}<span class="dots"></span>
                     </div>
                 `;
-                setTimeout(resolve, 1000);
+                setTimeout(resolve, 3
+                           000); // Increased to 4 seconds
             });
         }
 
